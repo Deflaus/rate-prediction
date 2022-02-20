@@ -22,3 +22,9 @@ server -> telegram : HTTP response: prediction\nfor the near future
 telegram -> client : Message: prediction for the\nlast time interval
 @enduml
 ```
+```mermaid
+sequenceDiagram
+    Alice->>John: Hello John, how are you?
+    John-->>Alice: Great!
+    Alice-)John: See you later!
+```
