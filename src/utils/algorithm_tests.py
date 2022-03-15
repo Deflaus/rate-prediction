@@ -18,8 +18,8 @@ warnings.filterwarnings("ignore")
 class AlgorithmTests:
     def __init__(self, data: DataFrame, test_size: int):
         self._data = data
-        self._train = self._data[0:test_size]  # обучающий набор
-        self._test = self._data[test_size:]  # тестовый набор
+        self._train = self._data[0:test_size]
+        self._test = self._data[test_size - 1 :]  # noqa: E203
 
     def test_methods(self):
         self._naive_forecast()
@@ -133,7 +133,7 @@ class AlgorithmTests:
         self._plt(algorithm="ARIMA", prediction=prediction)
 
 
-data = pd.read_csv("bitcoin.csv")
+data = pd.read_csv("../data/bitcoin.csv")
 data.index = pd.to_datetime(data.date, format="%Y%m%d")
 
 seasonal_decompose_result = seasonal_decompose(data.close, model="multiplicative")
