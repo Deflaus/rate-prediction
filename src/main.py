@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from src.api import update_router
+from src.routers import update_router
 from src.utils import telegram_api
 
 app = FastAPI()

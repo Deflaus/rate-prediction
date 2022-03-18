@@ -1,9 +1,9 @@
 import httpx
 from httpx import Response
 
-from src.rate_prediction.config import settings
-from src.core.enums import TelegramApiMethods
-from src.core.schemas.telegram_api import SendMessage
+from src.core.config import settings
+from src.utils.enums import TelegramApiMethods
+from src.schemas.telegram_api import SendMessage
 
 
 async def set_webhook() -> Response:
