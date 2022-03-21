@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 import aioredis
 from aiogram.dispatcher.webhook import SendMessage
 from aiogram.types import Message
@@ -15,11 +17,18 @@ class PredictBranch:
             db=RedisDBs.prediction_results.value,
             decode_responses=True,
         )
-        prediction = await r.get(KeySchema.prediction_result())
-        if prediction is None:
+        predictions = await r.lrange(KeySchema.prediction_result(), 0, -1)
+        if predictions is None:
             text = "*The prediction is not ready yet*"
         else:
-            text = f"*{prediction}*"
+            predictions = [round(float(prediction), 3) for prediction in predictions]
+            date_today = datetime.now()
+            today_value = predictions[0]
+            text = f"*Actual value ({date_today.strftime('%d.%m.%Y')})*: {today_value}\nPredictions:\n"
+            for idx, prediction in enumerate(predictions[1:]):
+                current_date = datetime.now() + timedelta(days=idx + 1)
+                text_prediction = f"{current_date.strftime('%d.%m.%Y')}: {prediction}"
+                text += f"{text_prediction} 🔼\n" if prediction >= today_value else f"{text_prediction} 🔽️\n"
         await r.close()
         message = SendMessage(chat_id=message.chat.id, text=text)
         return message

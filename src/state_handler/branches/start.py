@@ -1,5 +1,5 @@
 from aiogram.dispatcher.webhook import SendMessage
-from aiogram.types import Message, ParseMode
+from aiogram.types import Message
 
 
 class StartBranch:

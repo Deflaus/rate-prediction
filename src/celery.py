@@ -40,7 +40,9 @@ def predict_rate() -> None:
     model = LinearRegression()
     shift_data = pd.DataFrame(data.close.shift(-7))
     model.fit(shift_data[:-7], data.close.iloc[:-7])
-    prediction = model.predict(data[["close"]][-7:])
+    predictions = model.predict(data[["close"]][-7:])
 
     with redis.Redis(host=settings.redis_host, port=settings.redis_port, db=RedisDBs.prediction_results.value) as r:
-        r.set(KeySchema.prediction_result(), str(prediction[0]))
+        r.rpush(KeySchema.prediction_result(), str(data.close.iloc[-1]))
+        for prediction in predictions:
+            r.rpush(KeySchema.prediction_result(), str(prediction))
