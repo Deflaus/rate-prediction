@@ -8,11 +8,10 @@ authors = ["Your Name <you@example.com>"]
 python = "3.9.7"
 statsmodels = "^0.13.2"
 sklearn = "^0.0"
-fastapi = "^0.74.1"
-uvicorn = {extras = ["standard"], version = "^0.17.5"}
-httpx = "^0.22.0"
 aioredis = "^2.0.1"
 celery = {extras = ["redis"], version = "^5.2.3"}
+aiogram = "^2.19"
+pydantic = "^1.9.0"
 
 [tool.poetry.dev-dependencies]
 matplotlib = "^3.5.1"

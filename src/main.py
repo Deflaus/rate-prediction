@@ -1,18 +1,21 @@
-from fastapi import FastAPI
-from src.routers import update_router
-from src.utils import telegram_api
+from aiogram import Bot
+from aiogram.dispatcher import Dispatcher
+from aiogram.types import ParseMode, Message
+from aiogram.utils import executor
 
-app = FastAPI()
+from src.core.config import settings
+from src.state_handler.base import state_handler
 
-
-@app.on_event("startup")
-async def startup_event():
-    await telegram_api.set_webhook()
-
-
-@app.on_event("shutdown")
-async def shutdown_event():
-    await telegram_api.delete_webhook()
+bot = Bot(token=settings.token)
+dp = Dispatcher(bot)
 
 
-app.include_router(update_router)
+@dp.message_handler()
+async def handle_message(msg: Message):
+    response_message = await state_handler.handle_message(msg)
+    if response_message:
+        await bot.send_message(msg.from_user.id, response_message.text, parse_mode=ParseMode.MARKDOWN)
+
+
+if __name__ == "__main__":
+    executor.start_polling(dp)

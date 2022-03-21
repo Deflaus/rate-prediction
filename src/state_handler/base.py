@@ -1,14 +1,14 @@
 from typing import Tuple, Callable, Optional
 
 import aioredis
+from aiogram.dispatcher.webhook import SendMessage
+from aiogram.types import Message, User, MessageEntityType
 
-from src.bot.branches.predict import PredictBranch
-from src.bot.branches.start import StartBranch
+from src.state_handler.branches.predict import PredictBranch
+from src.state_handler.branches.start import StartBranch
 from src.core.config import settings
-from src.schemas.telegram_api import Message, User, MessageEntityType
 from src.utils.enums import RedisDBs
 from src.utils.redis_key_schema import KeySchema
-from src.utils.telegram_api import send_message
 
 
 class StateHandler:
@@ -47,7 +47,7 @@ class StateHandler:
         await r.close()
         return branch, state
 
-    async def handle_message(self, message: Message) -> None:
+    async def handle_message(self, message: Message) -> Optional[SendMessage]:
         response_message = None
         branch_name, state_name = await self._get_state_info(user=message.from_user)
         if branch := self._branches.get(branch_name, None):
@@ -69,8 +69,7 @@ class StateHandler:
             response_message = await next_state(message)
         if next_state:
             await self._save_state_info(user=message.from_user, branch_name=branch_name, state_name=next_state.__name__)
-        if response_message:
-            await send_message(message=response_message)
+        return response_message
 
 
 state_handler = StateHandler()

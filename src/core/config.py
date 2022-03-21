@@ -2,7 +2,6 @@ from pydantic import BaseSettings
 
 
 class Settings(BaseSettings):
-    host: str = None
     token: str = None
     redis_host: str = "localhost"
     redis_port: str = 6379
