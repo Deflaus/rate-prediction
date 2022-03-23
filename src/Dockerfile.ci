@@ -13,7 +13,7 @@ RUN apt update \
 COPY poetry.lock pyproject.toml ./
 
 RUN poetry config virtualenvs.create false \
-  && poetry install --no-dev --no-interaction --no-ansi
+  && poetry install --no-interaction --no-ansi
 
 COPY . /usr/src/app/
 
