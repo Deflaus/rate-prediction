@@ -1,0 +1,23 @@
+name: Lint
+on:
+  push:
+    branches:
+      - master
+      - develop
+  pull_request:
+    branches:
+      - master
+      - develop
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build the stack
+        run: docker-compose -f docker-compose.ci.yml -p rate_prediction up -d --build
+      - name: Lint
+        run: |
+          docker exec -i rate_prediction_bot_1 black --check .
+          docker exec -i rate_prediction_bot_1 flake8 --config=setup.cfg
+      - name: Down containers
+        run: docker-compose -f docker-compose.ci.yml -p tailor_test down -v

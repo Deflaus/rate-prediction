@@ -1,0 +1,15 @@
+name: Deploy
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: self-hosted
+    env:
+      TOKEN: ${{ secrets.TOKEN }}
+      REDIS_HOST: ${{ secrets.REDIS_HOST }}
+      REDIS_PORT: ${{ secrets.REDIS_PORT }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build new containers
+        run: docker-compose -f docker-compose.prod.yml -p rate_prediction up -d --build --remove-orphans
