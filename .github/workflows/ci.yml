@@ -20,4 +20,4 @@ jobs:
           docker exec -i rate_prediction_bot_1 black --check .
           docker exec -i rate_prediction_bot_1 flake8 --config=setup.cfg
       - name: Down containers
-        run: docker-compose -f docker-compose.ci.yml -p tailor_test down -v
+        run: docker-compose -f docker-compose.ci.yml -p rate_prediction down -v
