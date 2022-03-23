@@ -7,7 +7,7 @@ class RedisDBs(IntEnum):
     user_states = 2
 
 
-class TelegramApiMethods(str, Enum):
-    set_web_hook_method = "setWebhook"
-    delete_web_hook_method = "deleteWebhook"
-    send_message = "sendMessage"
+class BotCommands(str, Enum):
+    start = "start"
+    cancel = "cancel"
+    predict = "predict"

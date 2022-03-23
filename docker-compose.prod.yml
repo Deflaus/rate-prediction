@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  bot:
+    build: src
+    restart: on-failure
+    command: python3 main.py
+    depends_on:
+      - redis
+    environment: &env
+      TOKEN: ${TOKEN}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+
+  celery:
+    restart: on-failure
+    build: src
+    command: celery -A core worker -B -l INFO
+    depends_on:
+      - redis
+    environment:
+      <<: *env
+
+  redis:
+    image: redis:6.2.5
+    restart: on-failure
+    healthcheck:
+      test: redis-cli ping
+      interval: 30s
+      timeout: 10s
+      retries: 3

@@ -5,9 +5,9 @@ from celery import Celery
 from celery.schedules import crontab
 from celery.signals import worker_ready
 from sklearn.linear_model import LinearRegression
-from src.core.config import settings
-from src.utils.enums import RedisDBs
-from src.utils.redis_key_schema import KeySchema
+from core.config import settings
+from utils.enums import RedisDBs
+from utils.redis_key_schema import KeySchema
 
 
 app = Celery(
@@ -15,7 +15,7 @@ app = Celery(
     broker=settings.redis_dsn.format(settings.redis_host, settings.redis_port, RedisDBs.celery_broker.value),
 )
 app.conf.beat_schedule = {
-    "add-every-day": {
+    "predict-every-day": {
         "task": "predict_rate",
         "schedule": crontab(hour=0, minute=0),
     },
@@ -37,12 +37,16 @@ def predict_rate() -> None:
     data = pd.read_json(json_url)
     data = data.set_index("date")
 
+    prediction_period = 7
     model = LinearRegression()
-    shift_data = pd.DataFrame(data.close.shift(-7))
-    model.fit(shift_data[:-7], data.close.iloc[:-7])
-    predictions = model.predict(data[["close"]][-7:])
+    shift_data = pd.DataFrame(data.close.shift(-prediction_period))
+    model.fit(shift_data[:-prediction_period], data.close.iloc[:-prediction_period])
+    predictions = model.predict(data[["close"]][-prediction_period:])
 
     with redis.Redis(host=settings.redis_host, port=settings.redis_port, db=RedisDBs.prediction_results.value) as r:
+        if old_predictions := r.lrange(KeySchema.prediction_result(), 0, -1):
+            for _ in old_predictions:
+                r.rpop(KeySchema.prediction_result())
         r.rpush(KeySchema.prediction_result(), str(data.close.iloc[-1]))
         for prediction in predictions:
             r.rpush(KeySchema.prediction_result(), str(prediction))
