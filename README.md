@@ -18,11 +18,11 @@ sequenceDiagram
     end
     
     Note over client, crypto_exchange: Getting prediction for the near future
-    client ->> telegram : Message: prediction request
+    client ->> telegram : Message: message with the command /predict
     loop Every update period
         server -->> telegram : HTTP request: POST api.telegram.org/bot<token>/getUpdates
         telegram ->> server : HTTP response: user message or empty message
-        alt in the user's message with the command /predict
+        alt command /predict in the user's message 
             server ->> database : getting a prediction for the near future
             server -->> telegram : HTTP request: POST api.telegram.org/bot<token>/sendMessage
             telegram -->> client : Message: prediction for the next 7 days
