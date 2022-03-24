@@ -23,7 +23,7 @@ async def predict(message: types.Message):
         predictions = [round(float(prediction), 3) for prediction in predictions]
         date_today = datetime.now()
         today_value = predictions[0]
-        text = fmt.bold(f"Actual value {date_today.strftime('%d.%m.%Y')}")
+        text = fmt.bold(f"Actual value {date_today.strftime('%d.%m.%Y')}: {today_value}")
         text += "\nPredictions:\n"
         for idx, prediction in enumerate(predictions[1:]):
             current_date = datetime.now() + timedelta(days=idx + 1)
