@@ -9,7 +9,7 @@ class Settings(BaseSettings):
         "https://poloniex.com/public?command=returnChartData&currencyPair=USDT_BTC&start={}&end={}&period={}"
     )
     telegram_dsn: str = "https://api.telegram.org/bot{}/{}"
-    redis_dsn: str = "redis://{}:{}/{}"
+    redis_dsn: str = "redis://{}:{}"
 
 
 settings = Settings()
